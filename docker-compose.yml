@@ -1,0 +1,64 @@
+ version: "3.8"
+ networks:
+   idm_network:
+     driver: bridge
+ services:
+   webapp:
+     build:
+       context: ./webapp
+     networks:
+       - idm_network
+     ports:
+       - "8080:80"
+   mysql:
+     build:
+       context:
+         ./mysql
+     networks:
+       - idm_network
+     volumes:
+       - mysqlVol:/var/lib/mysql
+     environment:
+       - MYSQL_ROOT_PASSWORD=idm
+       - MYSQL_ROOT_HOST=%
+   fiware-idm:
+     image: fiware/idm:7.9.0
+     depends_on: 
+       - mysql
+     networks:
+       - idm_network
+     environment:
+       - IDM_DB_HOST=mysql
+   mongo-orion:
+     image: mongo:4.4.1
+     command: --nojournal
+     networks:
+       - idm_network
+     volumes:
+       - mongoOrionVol:/data/db
+   orion:
+     image: fiware/orion:2.4.2
+     networks:
+       - idm_network
+     depends_on:
+       - mongo-orion
+     command: -dbhost mongo-orion
+   mongo-data:
+     build:
+       context: ./mongo_data
+     command: --nojournal
+     networks:
+       - idm_network
+     volumes:
+       - mongoDataVol:/data/db
+   data-server:
+     build:
+       context: ./data_server
+     depends_on: 
+       - mongo-data
+     networks:
+       - idm_network
+ volumes:
+   mongoDataVol:
+   mongoOrionVol:
+   mysqlVol:

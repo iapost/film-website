@@ -1,0 +1,12 @@
+if(!db.getMongo().getDBNames().includes("film_project")){
+	db=db.getSiblingDB('film_project');
+	db.createCollection('users');
+	db.users.insert({'email':'own@mail.com','name':'Owner1','surname':'OwnerSurname1','notifications':[],'favorites':[]});
+	db.users.insert({'email':'admin@mail.com','name':'Admin1','surname':'AdminSurname1','notifications':[],'favorites':[]});
+	db.users.insert({'email':'user@mail.com','name':'User1','surname':'UserSurname1','notifications':[],'favorites':[]});
+	db.createCollection('cinemas');
+	db.cinemas.insert({'email':'own@mail.com','name':'Cinema1'});
+	db.createCollection('count');
+	db.count.insert({'id':1});
+	db.createCollection('newUsers');
+}
